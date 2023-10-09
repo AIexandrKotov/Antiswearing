@@ -1,10 +1,10 @@
-use std::io::{Read, Write};
+use std::io::Read;
 use walkdir::WalkDir;
 
-fn download_file() -> String {
-    let url = "https://raw.githubusercontent.com/bars38/Russian_ban_words/master/words.txt";
-    reqwest::blocking::get(url).unwrap().text().unwrap()
-}
+// fn download_file() -> String {
+//     let url = "https://raw.githubusercontent.com/bars38/Russian_ban_words/master/words.txt";
+//     reqwest::blocking::get(url).unwrap().text().unwrap()
+// }
 
 fn get_file(filename: &str) -> String {
     match std::fs::File::open(filename) {
@@ -14,10 +14,12 @@ fn get_file(filename: &str) -> String {
             buf
         }
         Err(_) => {
-            let mut f = std::fs::File::create(filename).unwrap();
-            let s = download_file();
-            f.write_all(s.as_bytes()).unwrap();
-            s
+            // let mut f = std::fs::File::create(filename).unwrap();
+            // let s = download_file();
+            // f.write_all(s.as_bytes()).unwrap();
+            // s
+            println!("{} not found. Please, place it near .exe", filename);
+            "blya".to_string()
         }
     }
 }
