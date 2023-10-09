@@ -30,6 +30,11 @@ trait Analizer {
 
 fn analize_file<T: Analizer>(analizer: &mut T, filename: &str, badwords: &Vec<String>) {
     let stream_result = std::fs::File::open(filename);
+    for bw in badwords {
+        if filename.to_lowercase().contains(bw.to_lowercase().as_str()){
+            analizer.mark(filename, usize::MAX, bw);
+        }
+    }
     match stream_result {
         Ok(mut stream) => {
             let mut s = String::new();
