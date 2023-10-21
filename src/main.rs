@@ -31,7 +31,7 @@ trait Analizer {
 fn analize_file<T: Analizer>(analizer: &mut T, filename: &str, badwords: &Vec<String>) {
     let stream_result = std::fs::File::open(filename);
     for bw in badwords {
-        if filename.to_lowercase().contains(bw.to_lowercase().as_str()){
+        if filename.to_lowercase().contains(bw.to_lowercase().as_str()) {
             analizer.mark(filename, usize::MAX, bw);
         }
     }
@@ -61,23 +61,19 @@ fn analize_dir<T: Analizer>(
     analizer: &mut T,
     dirname: &str,
     badwords: &Vec<String>,
-    search_pattern: String,
+    search_pattern: &str,
 ) {
-    for entry in WalkDir::new(dirname)
-        .min_depth(1)
-        .into_iter()
-        .filter_entry(|x| x.path().is_file())
-        .filter(|x| {
-            x.as_ref()
+    for entry in WalkDir::new(dirname).min_depth(1).into_iter().filter(|x| {
+        x.as_ref().unwrap().path().is_file()
+            && x.as_ref()
                 .unwrap()
                 .path()
                 .file_name()
                 .unwrap()
                 .to_str()
                 .unwrap()
-                .contains(search_pattern.as_str())
-        })
-    {
+                .contains(search_pattern)
+    }) {
         analize_file(analizer, entry.unwrap().path().to_str().unwrap(), badwords);
     }
 }
@@ -86,7 +82,7 @@ fn analize_any<T: Analizer>(
     analizer: &mut T,
     name: &str,
     badwords: &Vec<String>,
-    search_pattern: String,
+    search_pattern: &str,
 ) {
     let md = std::fs::metadata(name).unwrap();
     if md.is_file() {
@@ -151,7 +147,7 @@ fn main() {
         &mut analizer,
         &args.path,
         &bws,
-        args.search_pattern.unwrap_or("".to_string()),
+        &args.search_pattern.unwrap_or("".to_string()),
     );
 
     println!("---List of founded badwords: ");
